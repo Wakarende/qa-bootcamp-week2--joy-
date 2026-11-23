@@ -69,3 +69,22 @@ Run these steps in order from a terminal.
 
 - `npm run check`: checks your `.env` and that you can reach the Toolshop API.
 - `npm test`: runs the Playwright tests in `tests/`.
+
+## Week 2 Day 6: TypeScript basics
+
+### src/ts-basics/
+Practice files from the TypeScript lessons:
+- index.ts: a variable with a type annotation
+- tuples.ts: a fixed-length array where each element has its own type
+- functions.ts: a function with typed parameters, a default value and a return type
+- objects.ts: an object type with optional and readonly properties
+- type-aliases.ts: a custom type defined with a type alias
+- union-types.ts: a parameter that accepts a number or a string, using narrowing
+- optional-chaining.ts: safe access to values that may be null or undefined with ?.
+
+### src/profile-validator.ts
+Defines a User type (id, username, optional settings with optional notifications) and a function isNotified(user). It returns the notifications value, or false when settings or notifications is missing, without runtime errors. It prints expected and actual results for three test users: notifications on, no settings, and settings without notifications.
+
+How to check it:
+- Types: npx -p typescript tsc --noEmit --strict src/profile-validator.ts (no output means no type errors)
+- Run: npx tsx src/profile-validator.ts (each line's actual should match its expected)
