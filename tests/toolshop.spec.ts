@@ -29,7 +29,7 @@ test('search', async({page})=>{
     await expect(results).toBeVisible();
     
     //Product name
-    const productName = page.getByRole('heading', { name: 'pliers', level: 5 });
+    const productName = page.getByRole('heading', {level: 5 });
     await expect(productName.first()).toBeVisible();
 
     //Of all product names, the ones without pliers in them: there should be 0
