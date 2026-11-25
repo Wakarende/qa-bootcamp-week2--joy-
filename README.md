@@ -1,79 +1,76 @@
-# QA Bootcamp Week 2 Starter
+# Toolshop Test Suite
 
-This is the starting point for Week 2 of the QA bootcamp. During the week you will use it to practise:
-
-- TypeScript
-- Playwright (UI testing)
-- Postman (API testing)
-- The Toolshop REST API
-
-There are no tests in this repo. You will write them during the week.
+Automated UI and API tests for Toolshop, a practice e-commerce site (https://practicesoftwaretesting.com) and its REST API (https://api.practicesoftwaretesting.com). The tests are written in TypeScript with Playwright.
 
 ## Prerequisites
 
-Install these before you start:
-
-- [Node.js](https://nodejs.org/) (the current LTS version)
+- [Node.js](https://nodejs.org/) (current LTS version)
 - [Git](https://git-scm.com/)
-- [VS Code](https://code.visualstudio.com/)
 
-## Setup
+## Quick start
 
-Run these steps in order from a terminal.
+From the project folder:
 
-1. Clone the repo and open the folder:
-
-   ```bash
-   git clone <repo-url>
-   cd qa-bootcamp-week2-starter
-   ```
-
-2. Install the dependencies:
+1. Install the dependencies and the Chromium browser:
 
    ```bash
    npm install
-   ```
-
-3. Install the Chromium browser for Playwright:
-
-   ```bash
    npx playwright install chromium
    ```
 
-4. Copy `.env.example` to `.env`:
+2. Copy the example environment file:
 
    ```bash
    cp .env.example .env
    ```
 
-   `.env` already contains the Toolshop website URL (`TOOLSHOP_URL`) and the Toolshop API URL (`TOOLSHOP_API_URL`). Only change them if your trainer gives you different URLs.
+   `.env` contains the Toolshop website URL (`TOOLSHOP_URL`) and API URL (`TOOLSHOP_API_URL`).
 
-5. Check that your setup works:
+3. Run the suite:
 
    ```bash
-   npm run check
+   npm test
    ```
 
-   This sends a GET request to the Toolshop API's `/products` endpoint (no login needed). If everything is set up correctly, it prints your Node version, the HTTP status (200), the number of products, and a last line that says `PASS`.
+   Expected result: 7 passed.
 
-> **Warning:** never commit `.env`. It is where your own settings and, later in the course, your secrets (keys, tokens, passwords) live. It is listed in `.gitignore` so Git ignores it. Do not remove it from there.
+> **Warning:** never commit `.env`. It holds local settings and secrets. It is listed in `.gitignore`, so do not remove it from there.
 
-## Folders
+## Tests
 
-| Folder     | What it is for |
-|------------|----------------|
-| `tests/`   | Your Playwright tests. It is empty for now; you will add tests during the week. |
-| `scripts/` | Helper scripts. `check.ts` checks your setup and is run by `npm run check`. |
+| File | Type | What it checks |
+|------|------|----------------|
+| `tests/toolshop.spec.ts` | UI | The home page title is "Practice Software Testing - Toolshop - v5.0" |
+| `tests/toolshop.spec.ts` | UI | Searching "pliers" shows only products with "pliers" in the name |
+| `tests/toolshop.spec.ts` | UI | An invalid login shows "Invalid email or password" |
+| `tests/search.spec.ts` | UI, page object | Searching "hammer" shows only products with "hammer" in the name |
+| `tests/productapi.spec.ts` | API | GET /products returns 200 and the first product is "Combination Pliers" |
+| `tests/cartsapi.spec.ts` | API | Creating a cart and adding a product returns 200 and "item added or updated". The cart is deleted afterwards, even if a check fails |
+| `tests/cartsapi.spec.ts` | API | GET /carts/{id} with an id that doesn't exist returns 404 |
+
+### Conventions
+- UI tests use role-based and user-facing locators, `expect` for every check, and no fixed waits.
+- Toolshop uses the `data-test` attribute, so `playwright.config.ts` sets `testIdAttribute: 'data-test'` for `getByTestId`.
+- Any test that creates data deletes it in a `finally` block, so no test depends on another test's data.
+- API tests use the full API address, because the config's base URL points at the website.
+
+## Project structure
+
+| Folder | Contents |
+|--------|----------|
+| `tests/` | Playwright UI and API tests |
+| `pages/` | Page objects. `SearchPage.ts` holds the search page's locators and actions |
+| `scripts/` | Helper scripts. `check.ts` checks the setup |
+| `src/` | TypeScript practice files |
 
 ## Scripts
 
-- `npm run check`: checks your `.env` and that you can reach the Toolshop API.
-- `npm test`: runs the Playwright tests in `tests/`.
+- `npm test`: runs every Playwright test in `tests/`.
+- `npm run check`: checks `.env` and that the Toolshop API can be reached. It prints the Node version, status 200, the number of products and `PASS`.
 
-## Week 2 Day 6: TypeScript basics
+## TypeScript practice files
 
 ### src/ts-basics/
-Practice files from the TypeScript lessons:
 - index.ts: a variable with a type annotation
 - tuples.ts: a fixed-length array where each element has its own type
 - functions.ts: a function with typed parameters, a default value and a return type
@@ -83,8 +80,8 @@ Practice files from the TypeScript lessons:
 - optional-chaining.ts: safe access to values that may be null or undefined with ?.
 
 ### src/profile-validator.ts
-Defines a User type (id, username, optional settings with optional notifications) and a function isNotified(user). It returns the notifications value, or false when settings or notifications is missing, without runtime errors. It prints expected and actual results for three test users: notifications on, no settings, and settings without notifications.
+Defines a User type (id, username, optional settings with optional notifications) and a function isNotified(user). It returns the notifications value, or false when settings or notifications is missing, without runtime errors. It prints expected and actual results for three test users.
 
-How to check it:
-- Types: npx -p typescript tsc --noEmit --strict src/profile-validator.ts (no output means no type errors)
-- Run: npx tsx src/profile-validator.ts (each line's actual should match its expected)
+To check it:
+- Types: `npx -p typescript tsc --noEmit --strict src/profile-validator.ts` (no output means no type errors)
+- Run: `npx tsx src/profile-validator.ts` (each line's actual should match its expected)
