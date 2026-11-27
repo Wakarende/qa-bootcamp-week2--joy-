@@ -1,6 +1,6 @@
 # Toolshop Test Suite
 
-Automated UI and API tests for Toolshop, a practice e-commerce site (https://practicesoftwaretesting.com) and its REST API (https://api.practicesoftwaretesting.com). The tests are written in TypeScript with Playwright.
+Automated UI and API tests for Toolshop, a practice e-commerce site (https://practicesoftwaretesting.com) and its REST API (https://api.practicesoftwaretesting.com). It also includes capstone tests for Demoblaze (https://www.demoblaze.com) and its API (https://api.demoblaze.com). The tests are written in TypeScript with Playwright.
 
 ## Prerequisites
 
@@ -32,7 +32,7 @@ From the project folder:
    npm test
    ```
 
-   Expected result: 7 passed.
+   Expected result: 9 passed.
 
 > **Warning:** never commit `.env`. It holds local settings and secrets. It is listed in `.gitignore`, so do not remove it from there.
 
@@ -47,12 +47,15 @@ From the project folder:
 | `tests/productapi.spec.ts` | API | GET /products returns 200 and the first product is "Combination Pliers" |
 | `tests/cartsapi.spec.ts` | API | Creating a cart and adding a product returns 200 and "item added or updated". The cart is deleted afterwards, even if a check fails |
 | `tests/cartsapi.spec.ts` | API | GET /carts/{id} with an id that doesn't exist returns 404 |
+| `tests/jk25-order.ui.spec.ts` | UI, page object | JK-25 Place an order with valid details (Demoblaze): the popup shows "Thank you for your purchase!", "Amount: 360 USD" and "Name: Test Shopper", and the Cart is empty afterwards |
+| `tests/jk19-cart.api.spec.ts` | API | JK-19 Add two products and check cart prices (Demoblaze): the cart has exactly Samsung galaxy s6 and Nokia lumia 1520, at 360 and 820. The cart rows are deleted afterwards, even if a check fails |
 
 ### Conventions
 - UI tests use role-based and user-facing locators, `expect` for every check, and no fixed waits.
 - Toolshop uses the `data-test` attribute, so `playwright.config.ts` sets `testIdAttribute: 'data-test'` for `getByTestId`.
 - Any test that creates data deletes it in a `finally` block, so no test depends on another test's data.
 - API tests use the full API address, because the config's base URL points at the website.
+- Demoblaze API tests find products by title, not by a hardcoded id, and use a new random shopper id each run, so every run starts with an empty cart.
 
 ## Project structure
 
@@ -60,6 +63,7 @@ From the project folder:
 |--------|----------|
 | `tests/` | Playwright UI and API tests |
 | `pages/` | Page objects. `SearchPage.ts` holds the search page's locators and actions |
+| `tests/pages/` | Page objects. `DemoblazePage.ts` holds the Demoblaze order flow's locators and actions (addProduct, openCart, placeOrder, fillOrderForm, purchase, confirm) |
 | `scripts/` | Helper scripts. `check.ts` checks the setup |
 | `src/` | TypeScript practice files |
 
